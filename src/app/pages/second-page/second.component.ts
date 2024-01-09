@@ -17,7 +17,7 @@ import { PLATFORM_ID } from '@angular/core';
 import { lastValueFrom, map, shareReplay } from 'rxjs';
 import { ServerTransferStateModule } from '@angular/platform-server';
 
-const MY_KEY = makeStateKey<string>('myKey');
+
 @Component({
   selector: 'app-second',
   standalone: true,
@@ -30,6 +30,7 @@ export class SecondComponent implements OnInit {
   title = 'exon-test';
   response: any;
   baseUrl: string = '';
+   MY_KEY = makeStateKey<string>('myKey');
   constructor(
     private http: HttpClient,
     @Inject(PLATFORM_ID) platformId: Object,
@@ -44,12 +45,12 @@ export class SecondComponent implements OnInit {
       : 'thanks to j';
   }
   async ngOnInit() {
-    if (this.transferState.hasKey(MY_KEY)) {
-      const myData: any = this.transferState.get(MY_KEY, 'defaultValue');
+    if (this.transferState.hasKey(this.MY_KEY)) {
+      const myData: any = this.transferState.get(this.MY_KEY, 'defaultValue');
       this.response = myData.message;
     } else {
       let data: any = await lastValueFrom(this.apiCall());
-      this.transferState.set(MY_KEY, data);
+      this.transferState.set(this.MY_KEY, data);
       this.response = data.message;
     }
   }
