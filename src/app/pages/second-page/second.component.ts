@@ -18,7 +18,7 @@ export class SecondComponent implements OnInit {
 
   }
   ngOnInit(): void {
-      this.http.get('http://api/test').subscribe((res)=>{
+      this.http.get( process.env["BASE_URL"] +'api/test').subscribe((res)=>{
         this.response = JSON.stringify(res)
       })
   }
