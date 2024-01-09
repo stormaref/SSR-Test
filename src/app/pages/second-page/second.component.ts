@@ -1,14 +1,22 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnInit,
+  TransferState,
+  makeStateKey,
+} from '@angular/core';
+
 import {
   CommonModule,
   isPlatformBrowser,
   isPlatformServer,
 } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { environment } from '../../../environment';
-import { PLATFORM_ID } from '@angular/core';
-import { lastValueFrom } from 'rxjs';
 
+import { PLATFORM_ID } from '@angular/core';
+import { lastValueFrom, map, shareReplay } from 'rxjs';
+
+const MY_KEY = makeStateKey<string>('myKey');
 @Component({
   selector: 'app-second',
   standalone: true,
@@ -23,7 +31,8 @@ export class SecondComponent implements OnInit {
   baseUrl: string = '';
   constructor(
     private http: HttpClient,
-    @Inject(PLATFORM_ID) platformId: Object
+    @Inject(PLATFORM_ID) platformId: Object,
+    private transferState: TransferState
   ) {
     let isBrowser = isPlatformBrowser(platformId);
     let isServer = isPlatformServer(platformId);
@@ -33,10 +42,23 @@ export class SecondComponent implements OnInit {
       ? 'http://api'
       : 'thanks to j';
   }
- async ngOnInit() {
-    let data:any = await lastValueFrom(this.http.get(this.baseUrl + '/test'))
-  console.log(data,'data');
-  this.response = data.message
-  
+  async ngOnInit() {
+    if (this.transferState.hasKey(MY_KEY)) {
+      const myData: any = this.transferState.get(MY_KEY, 'defaultValue');
+      this.response = myData.message;
+    } else {
+      let data: any = await lastValueFrom(this.apiCall());
+      this.transferState.set(MY_KEY, data);
+      this.response = data.message;
+    }
+  }
+
+  apiCall() {
+    return this.http.get(this.baseUrl + '/test').pipe(
+      map((receivedData: any) => {
+        return receivedData;
+      }),
+      shareReplay()
+    );
   }
 }
