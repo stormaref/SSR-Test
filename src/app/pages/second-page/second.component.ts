@@ -7,6 +7,7 @@ import {
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environment';
 import { PLATFORM_ID } from '@angular/core';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-second',
@@ -32,9 +33,10 @@ export class SecondComponent implements OnInit {
       ? 'http://api'
       : 'thanks to j';
   }
-  ngOnInit(): void {
-    this.http.get(this.baseUrl + '/test').subscribe((res) => {
-      this.response = res;
-    });
+ async ngOnInit() {
+    let data:any = await lastValueFrom(this.http.get(this.baseUrl + '/test'))
+  console.log(data,'data');
+  this.response = data.message
+  
   }
 }
