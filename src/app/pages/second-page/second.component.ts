@@ -15,12 +15,13 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 import { PLATFORM_ID } from '@angular/core';
 import { lastValueFrom, map, shareReplay } from 'rxjs';
+import { ServerTransferStateModule } from '@angular/platform-server';
 
 const MY_KEY = makeStateKey<string>('myKey');
 @Component({
   selector: 'app-second',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule,ServerTransferStateModule],
   providers: [],
   templateUrl: './second.component.html',
   styleUrl: './second.component.scss',
