@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {  HttpClient, HttpClientModule } from '@angular/common/http';
+import { environment } from '../../../environment';
 
 
 @Component({
@@ -18,8 +19,8 @@ export class SecondComponent implements OnInit {
 
   }
   ngOnInit(): void {
-      this.http.get( process.env["BASE_URL"] +'api/test').subscribe((res)=>{
-        this.response = JSON.stringify(res)
+      this.http.get( environment.BASE_URL +'api/test').subscribe((res)=>{
+        this.response = res
       })
   }
 }
